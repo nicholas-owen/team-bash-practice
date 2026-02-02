@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# Usage: ./source_precheck.sh -s /path/to/source_directory [-r /path/to/report_folder]
+# Usage: ./source_precheck.sh -s /path/to/source_directory 
 # This script performs a pre-check on a source directory:
 # - Counts total files
 # - Calculates total size
 # - Works out the file density (files per TB)
 # - Warns if density is too high
-# - Outputs a Markdown report
 
 # exit on error, unset variables, or pipeline failure
 set -euo pipefail
@@ -21,18 +20,16 @@ usage() {
   echo ""
   echo "Options:"
   echo "  -s, --source <folder>    Specify the source folder to pre-check (required)."
-  echo "  -r, --report <folder>    Specify a folder to save the pre-check report (default: ~/Reports)."
   echo "  -h, --help               Display this help information and exit."
   echo "  -v, --version            Display the script version and exit."
   echo ""
   echo "Example:"
-  echo "  $0 -s /mnt/DBIO_Evans_data1 -r /home/almalinux/Reports"
-  echo "  $0 --source /mnt/DBIO_Evans_data1 --report /home/almalinux/Reports"
+  echo "  $0 -s /mnt/DBIO_Evans_data1 "
+  echo "  $0 --source /mnt/DBIO_Evans_data1"
 }
 
 # --- Initialize default values for options ---
 SOURCE_DIR=""
-REPORT_FOLDER="/home/almalinux/Reports"
 
 # --- Check if any arguments are provided ---
 if [ "$#" -eq 0 ]; then
@@ -53,23 +50,13 @@ while [[ "$#" -gt 0 ]]; do
         exit 1
       fi
       ;;
-    -r|--report)
-      if [[ -n "$2" && "$2" != -* ]]; then
-        REPORT_FOLDER="$2"
-        shift # Move past the option value
-      else
-        echo "❌ Error: Option '$1' requires an argument." >&2
-        usage
-        exit 1
-      fi
-      ;;
     -h|--help)
       usage
       exit 0
       ;;
     -v|--version)
-      echo "Version: v1.1_2026-01-21"
-      echo "This script is part of the UCL Research Data under Management project."
+      echo "Version: v1.1_2026-02-03TEST"
+      echo "This script is part of the UCL Research Data under Management project - TESTING ONLY."
       echo "Research Data Stewardship Group - UCL Advanced Research Computing"
       echo ""
       exit 0
@@ -102,17 +89,9 @@ if [[ ! -d "$SOURCE_DIR" ]]; then
   exit 1
 fi
 
-# Ensure the report directory exists
-mkdir -p "$REPORT_FOLDER" || { echo "❌ Error: Could not create report directory '$REPORT_FOLDER'."; exit 1; }
 
-# Create a timestamped report that also contains name of source directory
-TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-SOURCE_NAME=$(basename "$SOURCE_DIR")
-REPORT="/home/almalinux/Reports/precheck_${SOURCE_NAME}_${TIMESTAMP}.md"
-
-# Display header and output where report will be saved
+# Display header 
 echo " Running pre-check for: $SOURCE_DIR"
-echo "Generating report: $REPORT"
 echo ""
 
 # Step 1: Count total number of files
@@ -152,6 +131,6 @@ FILES_PER_TB=$(awk -v files="$FILE_COUNT" -v tb="$SIZE_TB" 'BEGIN { if (tb > 0) 
   else
     echo "✅ File density is below 200,000 files per TB."
   fi
- } > "$REPORT"
+ }
 
-echo "✅ Pre-check complete. Summary saved to: $REPORT"
+echo "✅ Pre-check complete.T"
